@@ -6,7 +6,7 @@ updates:
       include: "scope"
       prefix: "ci"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     cooldown:
       default-days: 7
     allow:
@@ -21,7 +21,7 @@ updates:
       include: "scope"
       prefix: "build"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     cooldown:
       default-days: 7
     versioning-strategy: "increase-if-necessary"
