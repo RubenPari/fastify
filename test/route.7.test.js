@@ -387,6 +387,35 @@ test('HEAD routes declared explicitly follow prefixTrailingSlash: \'slash\'', as
   t.assert.strictEqual(trailingSlashReply.statusCode, 200)
 })
 
+test('HEAD route mirrors status and headers when the GET handler returns a web Response', async t => {
+  t.plan(8)
+
+  const fastify = Fastify()
+
+  fastify.route({
+    method: 'GET',
+    path: '/web-response',
+    handler: (req, reply) => {
+      reply.send(new Response('hello world', {
+        status: 201,
+        headers: { 'x-demo': 'yes', 'content-type': 'text/plain' }
+      }))
+    }
+  })
+
+  const get = await fastify.inject({ method: 'GET', url: '/web-response' })
+  t.assert.strictEqual(get.statusCode, 201)
+  t.assert.strictEqual(get.headers['x-demo'], 'yes')
+  t.assert.strictEqual(get.headers['content-type'], 'text/plain')
+  t.assert.strictEqual(get.body, 'hello world')
+
+  const head = await fastify.inject({ method: 'HEAD', url: '/web-response' })
+  t.assert.strictEqual(head.statusCode, 201)
+  t.assert.strictEqual(head.headers['x-demo'], 'yes')
+  t.assert.strictEqual(head.headers['content-type'], 'text/plain')
+  t.assert.strictEqual(head.body, '')
+})
+
 test('GET route with body schema should throw', t => {
   t.plan(1)
 
